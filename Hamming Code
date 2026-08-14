@@ -1,0 +1,164 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    cout << "TRANSMITTER \n";
+    int d1, d2, d3, d4;
+    cout << "\nEnter Data Bit D1 : ";
+    cin >> d1;
+    cout << "Enter Data Bit D2 : ";
+    cin >> d2;
+    cout << "Enter Data Bit D3 : ";
+    cin >> d3;
+    cout << "Enter Data Bit D4 : ";
+    cin >> d4;
+
+    cout << "\nData Entered = "
+         << d1 << d2 << d3 << d4 << endl;
+    int p1 = d1 ^ d2 ^ d4;
+    int p2 = d1 ^ d3 ^ d4;
+    int p4 = d2 ^ d3 ^ d4;
+
+    cout << "\nCalculating Parity Bits...\n";
+    cout << "P1 = D1 XOR D2 XOR D4 = "
+         << d1 << " XOR "
+         << d2 << " XOR "
+         << d4 << " = "
+         << p1 << endl;
+
+    cout << "P2 = D1 XOR D3 XOR D4 = "
+         << d1 << " XOR "
+         << d3 << " XOR "
+         << d4 << " = "
+         << p2 << endl;
+
+    cout << "P4 = D2 XOR D3 XOR D4 = "
+         << d2 << " XOR "
+         << d3 << " XOR "
+         << d4 << " = "
+         << p4 << endl;
+    int code[8];
+
+    code[1] = p1;
+    code[2] = p2;
+    code[3] = d1;
+    code[4] = p4;
+    code[5] = d2;
+    code[6] = d3;
+    code[7] = d4;
+    cout << "\nHamming Code Positions\n";
+    cout << "Position : ";
+
+    for(int i=1;i<=7;i++)
+        cout << i << " ";
+
+    cout << "\nBit      : ";
+
+    for(int i=1;i<=7;i++)
+        cout << code[i] << " ";
+
+    cout << "\n\nGenerated Hamming Code = ";
+
+    for(int i=7;i>=1;i--)
+        cout << code[i];
+
+    char choice;
+    cout << "\n\nDo you want to introduce an error? (y/n) : ";
+    cin >> choice;
+
+    if(choice=='y' || choice=='Y')
+    {
+        int pos;
+
+        cout << "Enter bit position to flip (1 to 7) : ";
+        cin >> pos;
+
+        if(code[pos]==0)
+            code[pos]=1;
+        else
+            code[pos]=0;
+
+        cout << "\nError introduced at Position "
+             << pos << endl;
+    }
+    else
+    {
+        cout << "\nData sent without error.\n";
+    }
+
+    cout << "\nReceived Code = ";
+
+    for(int i=7;i>=1;i--)
+        cout << code[i];
+
+    cout << "\n\n RECEIVER \n";
+
+    int c1 = code[1] ^ code[3] ^ code[5] ^ code[7];
+
+    cout << "\nChecking P1 (1,3,5,7)";
+    cout << "\nResult = "
+         << code[1] << " XOR "
+         << code[3] << " XOR "
+         << code[5] << " XOR "
+         << code[7]
+         << " = " << c1 << endl;
+
+    int c2 = code[2] ^ code[3] ^ code[6] ^ code[7];
+
+    cout << "\nChecking P2 (2,3,6,7)";
+    cout << "\nResult = "
+         << code[2] << " XOR "
+         << code[3] << " XOR "
+         << code[6] << " XOR "
+         << code[7]
+         << " = " << c2 << endl;
+
+    int c4 = code[4] ^ code[5] ^ code[6] ^ code[7];
+
+    cout << "\nChecking P4 (4,5,6,7)";
+    cout << "\nResult = "
+         << code[4] << " XOR "
+         << code[5] << " XOR "
+         << code[6] << " XOR "
+         << code[7]
+         << " = " << c4 << endl;
+
+    int errorPosition = c4*4 + c2*2 + c1;
+
+    if(errorPosition==0)
+    {
+        cout << "\nNo Error Found.\n";
+    }
+    else
+    {
+        cout << "\nError Found at Position "
+             << errorPosition << endl;
+
+        cout << "Wrong Bit = "
+             << code[errorPosition] << endl;
+
+        if(code[errorPosition]==0)
+            code[errorPosition]=1;
+        else
+            code[errorPosition]=0;
+
+        cout << "\nError Corrected Successfully.\n";
+
+        cout << "Corrected Code = ";
+
+        for(int i=7;i>=1;i--)
+            cout << code[i];
+
+        cout << endl;
+    }
+
+    cout << "\nOriginal Data Bits = ";
+    cout << code[3]
+         << code[5]
+         << code[6]
+         << code[7];
+
+    return 0;
+}
+
