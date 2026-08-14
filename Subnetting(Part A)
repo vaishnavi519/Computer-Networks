@@ -1,0 +1,135 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+void intro()
+{
+    cout<<"\nDefinition of Subnetting:\n";
+    cout << "Subnetting is the process of dividing a large network into\n";
+    cout << "smaller networks called subnets. It helps to:\n";
+    cout << "1. Reduce network congestion.\n";
+    cout << "2. Improve network security.\n";
+
+    cout << "\nDefinition of Subnet Mask:\n";
+    cout << "A subnet mask is a 32-bit number used to separate the\n";
+    cout << "network portion and the host portion of an IP address.\n";
+    cout << "It tells which part of the IP address belongs to the\n";
+    cout << "network and which part belongs to the hosts.\n\n";
+
+    cout << "Every subnet contains:\n";
+    cout << "- Network Address  : First address of the subnet.\n";
+    cout << "- Host Addresses   : Addresses assigned to devices.\n";
+    cout << "- Broadcast Address: Last address of the subnet used to\n";
+    cout << "                     send data to all devices in the subnet.\n";
+}
+
+void findClass(int firstOctet)
+{
+    if (firstOctet >= 1 && firstOctet <= 126)
+    {
+        cout << "IP Class            : Class A\n";
+        cout << "Range               : 1 - 126\n";
+        cout << "Default Subnet Mask : 255.0.0.0\n";
+        cout << "Network Bits        : 8\n";
+        cout << "Host Bits           : 24\n";
+        cout << "Number of Hosts     : 2^24 - 2 = 16,777,214\n";
+
+        cout << "Why subtract 2?\n";
+        cout << "Total possible host addresses = 2^24\n";
+        cout << "- 1 address is reserved as the Network Address.\n";
+        cout << "- 1 address is reserved as the Broadcast Address.\n";
+        cout << "Therefore, usable hosts = 2^24 - 2.\n\n";
+
+        cout << "Broadcast Address:\n";
+        cout << "The last IP address of the network is called the\n";
+        cout << "Broadcast Address. It is used to send data to every\n";
+        cout << "device in the network.\n";
+       
+        cout<< "Number of networks: 2^7\n";
+        cout<<"Reason:This is because in Class A the starting bit is always 0\n";
+
+    }
+    else if (firstOctet == 127)
+    {
+        cout << "It is Loopback Address range.\n";
+        cout << "It is used for testing and troubleshooting the\n";
+        cout << "local computer.\n";
+    }
+    else if (firstOctet >= 128 && firstOctet <= 191)
+    {
+        cout<< "IP Class            : Class B\n";
+        cout<< "Range               : 128 - 191\n";
+        cout<< "Default Subnet Mask : 255.255.0.0\n";
+        cout<< "Network Bits        : 16\n";
+        cout<< "Host Bits           : 16\n";
+        cout<< "Number of Hosts     : 2^16 - 2 = 65,534\n";
+       
+        cout<< "Why subtract 2?\n";
+        cout<< "Total possible host addresses = 2^16\n";
+        cout<< "- 1 Network Address\n";
+        cout<< "- 1 Broadcast Address\n";
+        cout<< "Therefore, usable hosts = 2^16 - 2.\n\n";
+       
+         cout<< "Number of networks : 2^7\n";
+          cout<<"Reason:This is because in Class B the starting bits are always 1 and 0\n";
+
+    }
+    else if (firstOctet >= 192 && firstOctet <= 223)
+    {
+        cout<< "IP Class            : Class C\n";
+        cout<< "Range               : 192 - 223\n";
+        cout<< "Default Subnet Mask : 255.255.255.0\n";
+        cout<< "Network Bits        : 24\n";
+        cout<< "Host Bits           : 8\n";
+        cout<< "Number of Hosts     : 2^8 - 2 = 254\n";
+       
+        cout<< "Why subtract 2?\n";
+        cout<< "Total possible host addresses = 2^8\n";
+        cout<< "- 1 Network Address\n";
+        cout<< "- 1 Broadcast Address\n";
+        cout<< "Therefore, usable hosts = 2^8 - 2.\n\n";
+       
+        cout<< "Number of networks: 2^21\n";
+        cout<<"Reason:This is because in Class C the starting bits are always  1,1 and 0\n";
+
+    }
+    else if (firstOctet >= 224 && firstOctet <= 239)
+    {
+        cout<< "IP Class : Class D\n";
+        cout<< "Range    : 224 - 239\n";
+        cout<< "Purpose  : Multicasting\n";
+        cout<< "These addresses are not assigned to individual hosts,\n";
+        cout<< "so host calculation is not applicable.\n";
+    }
+    else if (firstOctet >= 240 && firstOctet <= 255)
+    {
+        cout<< "IP Class : Class E\n";
+        cout<< "Range    : 240 - 255\n";
+        cout<< "Purpose  : Reserved for research and experimental use.\n";
+        cout<< "These addresses are not assigned to hosts.\n";
+    }
+    else
+    {
+        cout << "Invalid IP Address.\n";
+    }
+}
+
+int main()
+{
+    intro();
+
+    string ip;
+    int firstOctet;
+
+    cout<< "Enter an IPv4 Address: ";
+    cin>> ip;
+
+    string first = ip.substr(0, ip.find('.'));
+    firstOctet = stoi(first);
+
+    cout<< "\n";
+    findClass(firstOctet);
+
+    return 0;
+}
+
