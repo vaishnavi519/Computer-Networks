@@ -1,82 +1,44 @@
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+import socket
 
-int main() {
-    int clientSocket;
-    struct sockaddr_in serverAddress;
-    char message[1024], reply[1024];
+# Server configuration
+HOST = "127.0.0.1"
+PORT = 5000
 
-    // Create TCP socket
-    clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+# Create TCP socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    if (clientSocket < 0) {
-        perror("Socket creation failed");
-        return 1;
-    }
+# Connect to server
+client_socket.connect((HOST, PORT))
 
-    // Configure server address
-    memset(&serverAddress, 0, sizeof(serverAddress));
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(5000);
+print("Connected to TCP Chat Server!")
+print("Type 'exit' to close the chat.\n")
 
-    // Use the server machine's IP address
-    serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
+# Chat communication
+while True:
+    # Input message from user
+    message = input("Client: ")
 
-    // Connect to server
-    if (connect(clientSocket, (struct sockaddr *)&serverAddress,
-                sizeof(serverAddress)) < 0) {
-        perror("Connection failed");
-        close(clientSocket);
-        return 1;
-    }
+    # Send message to server
+    client_socket.send(message.encode())
 
-    printf("Connected to TCP Chat Server!\n");
-    printf("Type 'exit' to close the chat.\n");
+    if message.lower() == "exit":
+        print("Chat ended.")
+        break
 
-    // Chat communication
-    while (1) {
-        printf("Client: ");
+    # Receive reply from server
+    reply = client_socket.recv(1024).decode()
 
-        if (fgets(message, sizeof(message), stdin) == NULL)
-            break;
+    if not reply:
+        print("Server disconnected.")
+        break
 
-        message[strcspn(message, "\n")] = '\0';
+    print(f"Server: {reply}")
 
-        if (send(clientSocket, message, strlen(message), 0) < 0) {
-            perror("Send failed");
-            break;
-        }
+    if reply.lower() == "exit":
+        print("Server ended the chat.")
+        break
 
-        if (strcmp(message, "exit") == 0) {
-            printf("Chat ended.\n");
-            break;
-        }
+# Close client socket
+client_socket.close()
 
-        memset(reply, 0, sizeof(reply));
-
-        int n = recv(clientSocket, reply, sizeof(reply) - 1, 0);
-
-        if (n <= 0) {
-            printf("Server disconnected.\n");
-            break;
-        }
-
-        reply[n] = '\0';
-        printf("Server: %s\n", reply);
-
-        if (strcmp(reply, "exit") == 0) {
-            printf("Server ended the chat.\n");
-            break;
-        }
-    }
-
-    // Close client socket
-    close(clientSocket);
-
-    printf("Client socket closed.\n");
-    return 0;
-}
+print("Client socket closed.")
